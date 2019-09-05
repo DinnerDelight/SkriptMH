@@ -92,6 +92,13 @@ command /unban [<offline player>] [<text>]:
 				if arg 2 contains "-s":
 					send "&7[SILENT] &a%arg 1% &7was unbanned by &a%player%" to all players where [input has permission "staff"]
 				unban arg 1
+				set {_type} to {ban::%arg 1's uuid%}
+				delete {ban::%arg 1's uuid%}
+				delete {ban::%arg 1's uuid%::%{_type}%::start}
+				delete {ban::%arg 1's uuid%::%{_type}%::time}
+				delete {ban::%arg 1's uuid%::%{_type}%::reason}
+				delete {ban::%arg 1's uuid%::%{_type}%::author}
+
 
 command /mute [<offline player>] [<text>]:
 	permission: staff.mute
@@ -109,6 +116,12 @@ command /mute [<offline player>] [<text>]:
 				if arg 2 does not contain "-s":
 					send "&7[SILENT] &a%arg 1% &7was muted by &a%player% &7for &a%arg 2% &7[FOREVER]" to all players
 				play sound "entity.experience_orb.pickup" to arg 1
+				set {_type} to {muted::%arg 1's uuid%}
+				delete {muted::%arg 1's uuid%}
+				delete {muted::%arg 1's uuid%::%{_type}%::start}
+				delete {muted::%arg 1's uuid%::%{_type}%::time}
+				delete {muted::%arg 1's uuid%::%{_type}%::reason}
+				delete {muted::%arg 1's uuid%::%{_type}%::author}
 
 on chat:
 	if {muted::%player's uuid%} is true:
