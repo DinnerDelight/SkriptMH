@@ -67,6 +67,7 @@ command /ban [<offline player>] [<text>]:
 			if arg 2 is not set:
 				player command "ban"
 			if arg 2 is set:
+				play sound "entity.experience_orb.pickup" to arg 1
 				if arg 2 does not contain "-s":
 					ban arg 1 due to "%nl%&2You are Banned!%nl%%nl%&7Reason: &a%arg 2%%nl%&7Time: &aForever%nl%&7Operator: &a%player%%nl%"
 					broadcast "&a%arg 1% &7was banned by &a%player% &7for &a%arg 2% &7[FOREVER]"
@@ -136,57 +137,46 @@ command /tempban [<offlineplayer>] [<text>] [<timespan>]:
   permission: staff.tempban
   permission message: &c&l[!] &cInsufficient Permission.
   trigger:
-    command sender is console:
-      {ban::%arg-1's uuid%} isn't set:
-        kick arg-1 because "%nl%&2You got banned!%nl%&2%nl%&7Operator: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author}%&2%nl%&7Time: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::time}%&2%nl%&7Reason: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::reason}%%nl%"
+    if arg 1 and arg 2 and arg 3 is set:	
+      {ban::%arg 1's uuid%} is set:
+        send "&c&l[!] &cThat player is already banned!"
+      else:
+      	play sound "entity.experience_orb.pickup" to arg 1
         set {ban::%arg-1's uuid%} to "Temp"
         set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::start} to now
         set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::time} to arg-3
         set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::reason} to arg-2
-        set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author} to "CONSOLE"
-        broadcast "&a%arg 1% &7was banned by &aCONSOLE &7for &a%arg 2% &7[%arg 3%&7]"
-    else:
-      arg-1 and arg-2 and arg-3 is set:
-        {ban::%arg-1's uuid%} is set:
-          send "&c&l[!] &cThis player is already banned!"
-        else:
-          set {ban::%arg-1's uuid%} to "Temp"
-          set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::start} to now
-          set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::time} to arg-3
-          set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::reason} to arg-2
-          set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author} to player
-          kick arg-1 because "%nl%&2You got banned%nl%&2%nl%&7Operator: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author}%&2%nl%&7Time: &a&2%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::time}%&2%nl%&7Reason: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::reason}%&2%nl%"
-          broadcast "&a%arg 1% &7was banned by &a%player% &7for &a%arg 2% &7[%arg 3%&7]"
-  
+        set {ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author} to player
+        kick arg-1 because "%nl%&2You got banned%nl%&2%nl%&7Operator: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::author}%&2%nl%&7Time: &a&2%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::time}%&2%nl%&7Reason: &a%{ban::%arg-1's uuid%::%{ban::%arg-1's uuid%}%::reason}%&2%nl%"
+      if arg 2 contains "-s":
+        send "&a%arg 1% &7was banned by &a%player% &7for &a%arg 2% &7[%arg 3%&7]" to all players where [input has permission "staff"]
       else:
-        send "&c&l[!] &cPlease use: /tempban <player> <reason> <time>"
+        broadcast ""&a%arg 1% &7was banned by &a%player% &7for &a%arg 2% &7[%arg 3%&7]""
+
+  
+    else:
+      send "&c&l[!] &cPlease use: /tempban <player> <reason> <time>"
 
 command /tempmute [<offlineplayer>] [<text>] [<timespan>]:
   permission: staff.tempmute
   permission message: &c&l[!] &cInsufficient Permission.
   trigger:
-    command sender is console:
-      {muted::%arg-1's uuid%} isn't set:
-        set {muted::%arg-1's uuid%} to "Temp"
-        set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::start} to now
-        set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::time} to arg-3
-        set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::reason} to arg-2
-        set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::author} to "CONSOLE"
-        broadcast "&a%arg 1% &7was muted by &aCONSOLE &7for &a%arg 2% &7[%arg 3%&7]"
-    else:
-      arg-1 and arg-2 and arg-3 is set:
-        {muted::%arg-1's uuid%} is set:
-          send "&c&l[!] &cThat player is already muted."
-        else:
-          set {muted::%arg-1's uuid%} to "Temp"
-          set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::start} to now
-          set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::time} to arg-3
-          set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::reason} to arg-2
-          set {muted::%arg-1's uuid%::%{muted::%arg-1's uuid%}%::author} to player
-          broadcast "&a%arg 1% &7was muted by &a%player% &7for &a%arg 2% &7[%arg 3%&7]"
- 
+    if arg 1 and arg 2 and arg 3 is set:	
+      {ban::%arg 1's uuid%} is set:
+        send "&c&l[!] &cThat player is already banned!"
       else:
-        send "&c&l[!] &cPlease use: /tempmute <player> <reason> <time>"
+      	play sound "entity.experience_orb.pickup" to arg 1
+        set {mute::%arg-1's uuid%} to "Temp"
+        set {mute::%arg-1's uuid%::%{mute::%arg-1's uuid%}%::start} to now
+        set {mute::%arg-1's uuid%::%{mute::%arg-1's uuid%}%::time} to arg-3
+        set {mute::%arg-1's uuid%::%{mute::%arg-1's uuid%}%::reason} to arg-2
+        set {mute::%arg-1's uuid%::%{mute::%arg-1's uuid%}%::author} to player
+      if arg 2 contains "-s":
+        send "&a%arg 1% &7was muted by &a%player% &7for &a%arg 2% &7[%arg 3%&7]" to all players where [input has permission "staff"]
+      else:
+        broadcast ""&a%arg 1% &7was muted by &a%player% &7for &a%arg 2% &7[%arg 3%&7]""
+    else:
+      send "&c&l[!] &cPlease use: /tempmute <player> <reason> <time>"
 
 on connect:
   {ban::%uuid of player%} = "Temp":
@@ -194,7 +184,7 @@ on connect:
     set {_b} to {ban::%player's uuid%::%{ban::%player's uuid%}%::time}
     reduce {_b} by {_a}
     if {_a} < {ban::%player's uuid%::%{ban::%player's uuid%}%::time}:
-      kick player due to "%nl%&2You are currently banned fro%nl%&2%nl%&7Operator: &a%{ban::%player's uuid%::%{ban::%player's uuid%}%::author}%&2%nl%&7Expires in: &a%{_b}%&2%nl%&7Reason: &a%{ban::%player's uuid%::%{ban::%player's uuid%}%::reason}%&2%nl%"
+      kick player due to "%nl%&2You are banned!%nl%&2%nl%&7Operator: &a%{ban::%player's uuid%::%{ban::%player's uuid%}%::author}%&2%nl%&7Expires in: &a%{_b}%&2%nl%&7Reason: &a%{ban::%player's uuid%::%{ban::%player's uuid%}%::reason}%&2%nl%"
     else:
       set {_type} to {ban::%player's uuid%}
       delete {ban::%player's uuid%}
